@@ -5,9 +5,13 @@
 package it.polito.tdp.PremierLeague;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.PremierLeague.model.Adiacenza;
 import it.polito.tdp.PremierLeague.model.Model;
+import it.polito.tdp.PremierLeague.model.Statistiche;
+import it.polito.tdp.PremierLeague.model.Team;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -35,7 +39,7 @@ public class FXMLController {
     private Button btnSimula; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbSquadra"
-    private ComboBox<?> cmbSquadra; // Value injected by FXMLLoader
+    private ComboBox<Team> cmbSquadra; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtN"
     private TextField txtN; // Value injected by FXMLLoader
@@ -48,17 +52,54 @@ public class FXMLController {
 
     @FXML
     void doClassifica(ActionEvent event) {
-
+    	txtResult.clear();
+    	Team squadra = cmbSquadra.getValue();
+    	if (squadra == null) {
+    		txtResult.setText("Selezionare una squadra.\n");
+    		return;
+    	}
+    	List<Adiacenza> squadreMigliori = model.doSquadreMigliori(squadra);
+    	txtResult.setText("SQUADRE MIGLIORI: \n");
+    	for (Adiacenza a : squadreMigliori) {
+    		txtResult.appendText(a.getT2()+"("+a.getPeso()+")\n");
+    	}
+    	List<Adiacenza> squadrePeggiori = model.doSquadrePeggiori(squadra);
+    	txtResult.appendText("\nSQUADRE PEGGIORI: \n");
+    	for (Adiacenza a : squadrePeggiori) {
+    		txtResult.appendText(a.getT2()+"("+a.getPeso()+")\n");
+    	}
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	model.creaGrafo();
+    	cmbSquadra.getItems().setAll(model.getIdMap().values());
     }
 
     @FXML
     void doSimula(ActionEvent event) {
-
+    	txtResult.clear();
+    	if (!model.grafoCreato()) {
+    		txtResult.setText("Creare un grafo.\n");
+    		return;
+    	}
+    	int N;
+    	try {
+    		N = Integer.parseInt(txtN.getText());
+    	} catch (NumberFormatException e) {
+    		e.printStackTrace();
+    		return;
+    	}
+    	int X;
+    	try {
+    		X = Integer.parseInt(txtX.getText());
+    	} catch (NumberFormatException e) {
+    		e.printStackTrace();
+    		return;
+    	}
+    	Statistiche stat = model.simula(N,X);
+    	txtResult.setText("Numero di reporter che hanno assistito, in media, ad ogni partita: "+stat.getMediaReporter()+"\n");
+    	txtResult.appendText("Numero di partite per cui il numero totale di reporter era critico: "+stat.getNumPartiteCritiche());
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete

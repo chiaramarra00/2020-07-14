@@ -1,13 +1,48 @@
 package it.polito.tdp.PremierLeague.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Team {
 	Integer teamID;
 	String name;
+	private Integer points;
+	private Integer numReporter;
+	private List<Team> squadreMigliori;
+	private List<Team> squadrePeggiori;
+	
+	public List<Team> getSquadrePeggiori() {
+		return squadrePeggiori;
+	}
+
+	public List<Team> getSquadreMigliori() {
+		return squadreMigliori;
+	}
+
+	public Integer getNumReporter() {
+		return numReporter;
+	}
+
+	public void setNumReporter(Integer numReporter) {
+		this.numReporter = numReporter;
+	}
+
+	public Integer getPoints() {
+		return points;
+	}
+
+	public void setPoints(Integer points) {
+		this.points = points;
+	}
 
 	public Team(Integer teamID, String name) {
 		super();
 		this.teamID = teamID;
 		this.name = name;
+		points = 0;
+		numReporter = 0;
+		squadreMigliori = new ArrayList<Team>();
+		squadrePeggiori = new ArrayList<Team>();
 	}
 	
 	public Integer getTeamID() {
@@ -22,8 +57,6 @@ public class Team {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
 
 	@Override
 	public String toString() {
@@ -53,6 +86,14 @@ public class Team {
 		} else if (!teamID.equals(other.teamID))
 			return false;
 		return true;
+	}
+
+	public void addSquadraPeggiore(Team t) {
+		squadrePeggiori.add(t);
+	}
+
+	public void addSquadraMigliore(Team t) {
+		squadreMigliori.add(t);
 	}
 	
 }
